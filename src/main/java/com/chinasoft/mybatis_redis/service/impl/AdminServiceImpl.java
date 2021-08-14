@@ -5,6 +5,7 @@ import com.chinasoft.mybatis_redis.service.AdminService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserById(Map<String, Object> map) {
         return adminMapper.deleteUserById(map);
     }
