@@ -1,0 +1,112 @@
+server:
+  servlet:
+    context-path: /     #路径访问项目名
+  encoding:
+    force-response: true
+  port: 8088              #内置tomcat的自定义启动端口号
+  tomcat:
+    uri-encoding: utf-8         #tomcat内 传递同步异步数据支持中文
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  session: #Spring-session共享 redis 配置
+    storeType: redis
+    timeout: 10m
+    redis:
+      flushMode: on_save
+      namespace: redis:session
+  redis: #添加NoSQL  非关系型数据库的连接配置 redis
+    host: 127.0.0.1  #连接数据库的IP地址 我们属于本机安装
+    port: 6379  #连接redis数据库端口号
+    password: 123456
+    database: 0    #Redis数据库索引 （默认为0）
+    timeout: 1200  #连接超时时间（毫米）
+    lettuce:
+      pool: # 连接池各属性配置
+        max-active: 8   # 连接池最大连接数 (使用负值表示没有限制)
+        max-wait: -1      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 8   # 连接池中的最大空闲连接
+        min-idle: 0   # 连接池中的最小空闲连接
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  resources:            # static-locations  进行加载/templates/ 与 /static/下的所有静态资源
+    static-locations: classpath:/templates/,classpath:/static/,classpath:/pj_static/,file:pj_static/
+  mvc:
+    view:
+      prefix: /        #设置框架跳转网页前缀
+      suffix: .html                 #设置框架跳转网页后缀
+    servlet:
+      load-on-startup: 1         #线程锁，保证微服务线程启动1次
+
+  #使用Thymeleaf模板引擎
+  thymeleaf:
+    cache: false          #关闭页面缓存
+    encoding: UTF-8    #页面模板编码
+    prefix: classpath:/templates/   #页面映射路径
+    suffix: .html    #静态页面的后缀
+    mode: HTML5   #页面模式
+    content-type: application/json;charset=UTF-8  #页面的文本显示类型规范 json返回数据支持中文
+
+  profiles:
+    active: dev #设置项目编写环境（开发环境）
+  # JPA数据库连接信息
+  datasource:
+    name: test
+    url: jdbc:mysql://127.0.0.1:3306/mybatis_redis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    #使用druid数据连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # druid数据连接池 的持久化性能配置
+    filters: stat,wall,slf4j,log4j
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+  jpa:
+    database: MYSQL
+    show-sql: true
+    open-in-view: true
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true #使用延时加载时控制Session的生命周期
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        ddl-auto: update
+# MyBatis
+mybatis:
+  typeAliasesPackage: com.chinasoft.mybatis_redis.entity
+  mapperLocations: classpath:mybatis/mapper/*.xml
+  #configLocation: classpath:mybatis/mybatis.cfg.xml
+  configuration:
+    cacheEnabled: true
+
+# PageHelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  returnPageInfo: check
+  params: count=countSql
+
+logging:          #扫描dao层，保证SQL指令在控制台 输出
+  level:
+    com:
+      chinasoft:
+        mybatis_redis:
+          dao: trace

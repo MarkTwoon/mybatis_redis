@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.mybatis_redis.dao.AdminMapper">
+    <!-- 写入cache单列标签  表面在此映射中开启mybatis二级缓存-->
+    <cache  eviction="LRU"
+            type="com.chinasoft.mybatis_redis.cache.MybatisRedisCache"
+            flushInterval="6000000" readOnly="false" size="1024" />
+
+    <select id="selectUserAll"   resultType="map"
+            useCache="true"   flushCache="false" >
+        select * from tb_user
+    </select>
+
+    <delete id="deleteUserById"   parameterType="map"
+               flushCache="true" >
+      delete  from tb_user where USER_ID=#{userId}
+    </delete>
+
+
+
+</mapper>
